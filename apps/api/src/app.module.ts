@@ -8,6 +8,7 @@ import { ContentModule } from './content/content.module';
 import { CommerceModule } from './catalog/commerce.module';
 import { RealtimeModule } from './live/realtime.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AnalyticsModule } from './analytics/analytics.module';
     CommerceModule,
     RealtimeModule,
     AnalyticsModule,
+    StorageModule,
   ],
   controllers: [HealthController],
 })

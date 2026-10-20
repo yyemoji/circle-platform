@@ -25,7 +25,7 @@
 - [x] Task 8 — Mobile shell, authentication, home, and profile
 - [x] Task 9 — Remaining mobile product features
 - [x] Task 10 — Administration console
-- [ ] Task 11 — Storage and integration adapters
+- [x] Task 11 — Storage and integration adapters
 - [ ] Task 12 — Linux and Windows deployment
 - [ ] Task 13 — End-to-end verification and documentation
 
@@ -111,3 +111,11 @@
 - GREEN: administration component tests 2/2 pass; API unit tests 29/29 and API E2E tests 22/22 pass; recursive typecheck and production build pass for both frontends and the API.
 - Review: permission-filtered menus, dashboard, users and anchors, batch moderation, wallet adjustment audit, commerce, live operations, risk/audit, masked provider configuration, and UTF-8 CSV export are implemented. Secret values are never returned to the browser.
 - Commit: included with `feat: add complete administration console`
+
+### Task 11
+
+- Status: complete
+- RED: integration unit tests failed because Tencent, payment, and redaction adapters did not exist; storage security E2E returned 404 for upload routes.
+- GREEN: API unit tests 32/32 and API E2E tests 24/24 pass; all workspace component tests, recursive typecheck, and production builds pass.
+- Review: magic-byte MIME validation, 10 MiB limit, UUID-only storage paths, sanitized original names, owner authorization, optional Tencent live, sandbox/disabled payment providers, recursive log redaction, and third-party notices are implemented.
+- Commit: included with `feat: secure media storage and integration adapters`
