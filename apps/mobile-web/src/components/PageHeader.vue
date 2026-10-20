@@ -1,0 +1,1 @@
+<script setup lang="ts">defineProps<{title:string;subtitle?:string}>();</script><template><header class="page-header"><button aria-label="返回" @click="$router.back()">‹</button><div><h1>{{title}}</h1><p v-if="subtitle">{{subtitle}}</p></div><slot/></header></template>
