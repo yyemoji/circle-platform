@@ -65,6 +65,20 @@ enum ApplicationStatus {
   REJECTED
 }
 
+enum ProductType {
+  COIN_PACKAGE
+  MEMBERSHIP
+  GOODS
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDING
+  REFUNDED
+}
+
 model User {
   id              String        @id @default(cuid())
   username        String        @unique
@@ -89,6 +103,79 @@ model User {
   applications    Application[]
   favorites       Favorite[]
   comments        Comment[]
+  addresses       Address[]
+  orders          Order[]
+  memberships     Membership[]
+}
+
+model Product {
+  id         String      @id @default(cuid())
+  name       String
+  type       ProductType
+  price      Int
+  coinAmount Int?
+  planDays   Int?
+  stock      Int?
+  active     Boolean     @default(true)
+  orders     Order[]
+  memberships Membership[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model MembershipPlan {
+  id       String   @id @default(cuid())
+  name     String
+  days     Int
+  price    Int
+  benefits String[]
+  active   Boolean  @default(true)
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  active    Boolean  @default(true)
+  startsAt  DateTime
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+  @@unique([userId, productId])
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  recipient String
+  phone     String
+  detail    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  userId         String
+  productId      String
+  quantity       Int
+  totalAmount    Int
+  status         OrderStatus @default(PENDING)
+  idempotencyKey String      @unique
+  user           User        @relation(fields: [userId], references: [id], onDelete: Restrict)
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Restrict)
+  paymentEvents  PaymentEvent[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model PaymentEvent {
+  id        String   @id @default(cuid())
+  orderId   String
+  eventId   String   @unique
+  success   Boolean
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
 }
 
 model Application {

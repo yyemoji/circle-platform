@@ -1,0 +1,2 @@
+import { BadRequestException } from '@nestjs/common'; import { describe, expect, it } from 'vitest'; import { transitionPayment } from './payment-state-machine';
+describe('payment state machine', () => { it.each([['PENDING','PAID'],['PENDING','CANCELLED'],['PAID','REFUNDING'],['REFUNDING','REFUNDED']] as const)('allows %s -> %s', (a,b) => expect(transitionPayment(a,b)).toBe(b)); it.each([['PAID','PAID'],['REFUNDED','PAID'],['CANCELLED','PAID']] as const)('rejects %s -> %s', (a,b) => expect(() => transitionPayment(a,b)).toThrow(BadRequestException)); });

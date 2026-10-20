@@ -47,6 +47,10 @@ async function main(): Promise<void> {
     const data = { title: item.title, viewerCoins: item.viewerCoins, secondViewCoins: item.secondViewCoins, anchorId: anchor.id };
     await prisma.liveRoom.upsert({ where: { streamKey: item.streamKey }, update: data, create: { streamKey: item.streamKey, ...data } });
   }
+  await prisma.product.upsert({ where: { id: 'coins-1000' }, update: {}, create: { id: 'coins-1000', name: '1000金币', type: 'COIN_PACKAGE', price: 1000, coinAmount: 1000 } });
+  await prisma.product.upsert({ where: { id: 'member-30' }, update: {}, create: { id: 'member-30', name: '主播圈月卡', type: 'MEMBERSHIP', price: 2990, planDays: 30 } });
+  await prisma.product.upsert({ where: { id: 'gift-box' }, update: {}, create: { id: 'gift-box', name: '主播周边礼盒', type: 'GOODS', price: 9900, stock: 50 } });
+  await prisma.membershipPlan.upsert({ where: { id: 'plan-30' }, update: {}, create: { id: 'plan-30', name: '主播圈月卡', days: 30, price: 2990, benefits: ['专属内容', '会员标识'] } });
 }
 
 main().finally(async () => prisma.$disconnect());
