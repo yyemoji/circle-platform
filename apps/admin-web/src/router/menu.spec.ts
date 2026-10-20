@@ -1,0 +1,1 @@
+import{describe,expect,it}from'vitest';import{menusFor}from'./menu';describe('admin menus',()=>{it('filters menus by permissions',()=>{expect(menusFor(['content:review']).map(x=>x.label)).toEqual(['内容审核']);expect(menusFor(['*'])).toHaveLength(8)})});

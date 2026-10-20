@@ -7,6 +7,7 @@ import { AccountModule } from './users/account.module';
 import { ContentModule } from './content/content.module';
 import { CommerceModule } from './catalog/commerce.module';
 import { RealtimeModule } from './live/realtime.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RealtimeModule } from './live/realtime.module';
     ContentModule,
     CommerceModule,
     RealtimeModule,
+    AnalyticsModule,
   ],
   controllers: [HealthController],
 })

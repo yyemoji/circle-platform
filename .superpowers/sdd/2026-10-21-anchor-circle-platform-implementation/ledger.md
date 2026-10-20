@@ -24,7 +24,7 @@
 - [x] Task 7 — Live, second view, chat, appointments, and media
 - [x] Task 8 — Mobile shell, authentication, home, and profile
 - [x] Task 9 — Remaining mobile product features
-- [ ] Task 10 — Administration console
+- [x] Task 10 — Administration console
 - [ ] Task 11 — Storage and integration adapters
 - [ ] Task 12 — Linux and Windows deployment
 - [ ] Task 13 — End-to-end verification and documentation
@@ -103,3 +103,11 @@
 - GREEN: mobile component tests 7/7 pass; API unit tests 29/29 and API E2E tests 19/19 pass; recursive typecheck and production build pass.
 - Review: circle discovery and invitations, content submission guidance, wallet/catalog/orders, conversations and appointments, live startup/fallback, role-gated anchor center, settings, and confirmed logout are available through the mobile router with responsive layouts and accessible controls.
 - Commit: pending
+
+### Task 10
+
+- Status: complete
+- RED: administration API tests returned 404 for dashboard, configuration, wallet audit, and CSV routes; administration component tests could not resolve the not-yet-created app.
+- GREEN: administration component tests 2/2 pass; API unit tests 29/29 and API E2E tests 22/22 pass; recursive typecheck and production build pass for both frontends and the API.
+- Review: permission-filtered menus, dashboard, users and anchors, batch moderation, wallet adjustment audit, commerce, live operations, risk/audit, masked provider configuration, and UTF-8 CSV export are implemented. Secret values are never returned to the browser.
+- Commit: included with `feat: add complete administration console`
