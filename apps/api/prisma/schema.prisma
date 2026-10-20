@@ -28,6 +28,12 @@ enum ContentStatus {
   OFFLINE
 }
 
+enum ContentKind {
+  DYNAMIC
+  CIRCLE_DYNAMIC
+  MATERIAL
+}
+
 enum LiveStatus {
   CREATED
   LIVE
@@ -81,6 +87,8 @@ model User {
   devices         Device[]
   reports         Report[]
   applications    Application[]
+  favorites       Favorite[]
+  comments        Comment[]
 }
 
 model Application {
@@ -167,6 +175,7 @@ model Circle {
   ownerId     String
   owner       User     @relation("CircleOwner", fields: [ownerId], references: [id])
   posts       Post[]
+  invites     CircleInvite[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -177,11 +186,49 @@ model Post {
   circleId  String?
   title     String
   body      String
+  kind      ContentKind   @default(DYNAMIC)
+  tags      String[]
   status    ContentStatus @default(DRAFT)
+  rejectionReason String?
   author    User          @relation(fields: [authorId], references: [id])
   circle    Circle?       @relation(fields: [circleId], references: [id])
+  favorites Favorite[]
+  comments  Comment[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+}
+
+model CircleInvite {
+  id        String   @id @default(cuid())
+  circleId  String
+  code      String   @unique
+  expiresAt DateTime?
+  maxUses   Int?
+  uses      Int      @default(0)
+  circle    Circle   @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Favorite {
+  userId    String
+  postId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, postId])
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  postId    String
+  authorId  String
+  parentId  String?
+  body      String
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
 }
 
 model LiveRoom {
