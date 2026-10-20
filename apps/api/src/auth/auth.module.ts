@@ -19,6 +19,6 @@ import { PrismaAuthStore } from './prisma-auth.store';
     { provide: AuthService, inject: [AuthStore, JwtService, AUTH_SECRETS], useFactory: (store: AuthStore, jwt: JwtService, secrets: AuthSecrets) => new AuthService(store, jwt, secrets) },
     AccessTokenGuard,
   ],
-  exports: [AuthService, AccessTokenGuard],
+  exports: [AuthService, AccessTokenGuard, JwtModule, AUTH_SECRETS],
 })
 export class AuthModule {}

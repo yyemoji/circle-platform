@@ -40,6 +40,25 @@ enum LedgerDirection {
   DEBIT
 }
 
+enum ReportStatus {
+  SUBMITTED
+  PROCESSING
+  RESOLVED
+  REJECTED
+}
+
+enum ApplicationType {
+  ACCOUNT_MERGE
+  JOIN_US
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  PROCESSING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id              String        @id @default(cuid())
   username        String        @unique
@@ -59,6 +78,44 @@ model User {
   liveRooms       LiveRoom[]
   refreshTokens   RefreshToken[]
   auditLogs       AuditLog[]    @relation("AuditActor")
+  devices         Device[]
+  reports         Report[]
+  applications    Application[]
+}
+
+model Application {
+  id        String            @id @default(cuid())
+  userId    String
+  type      ApplicationType
+  status    ApplicationStatus @default(SUBMITTED)
+  payload   Json
+  remark    String?
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Device {
+  id          String   @id @default(cuid())
+  userId      String
+  fingerprint String   @unique
+  name        String
+  lastSeenAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+}
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  targetType String
+  targetId   String
+  reason     String
+  status     ReportStatus @default(SUBMITTED)
+  resolution String?
+  reporter   User         @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 }
 
 model Role {
