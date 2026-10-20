@@ -7,6 +7,8 @@ const environmentSchema = z.object({
   REDIS_URL: z.string().url().optional(),
   STORAGE_DRIVER: z.enum(['local', 'minio']).default('local'),
   STORAGE_LOCAL_PATH: z.string().default('./data/uploads'),
+  JWT_ACCESS_SECRET: z.string().min(32).optional(),
+  JWT_REFRESH_SECRET: z.string().min(32).optional(),
 });
 
 export type Environment = z.infer<typeof environmentSchema>;

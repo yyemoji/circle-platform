@@ -1,6 +1,7 @@
 .worktrees/
 .superpowers/
 node_modules/
+node_modules.corrupt/
 dist/
 coverage/
 .env
