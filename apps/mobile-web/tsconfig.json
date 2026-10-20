@@ -1,0 +1,1 @@
+{"extends":"../../tsconfig.base.json","compilerOptions":{"module":"ESNext","moduleResolution":"Bundler","types":["vite/client","vitest/globals"],"jsx":"preserve","noEmit":true},"include":["src/**/*.ts","src/**/*.vue","vite.config.ts"]}
