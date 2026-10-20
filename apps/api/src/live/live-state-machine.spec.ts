@@ -1,0 +1,2 @@
+import { BadRequestException } from '@nestjs/common'; import { describe,expect,it } from 'vitest'; import { transitionLive } from './live-state-machine';
+describe('live state machine',()=>{it.each([['CREATED','LIVE'],['LIVE','RECONNECTING'],['RECONNECTING','LIVE'],['LIVE','ENDED'],['RECONNECTING','ENDED']]as const)('allows %s -> %s',(a,b)=>expect(transitionLive(a,b)).toBe(b));it.each([['CREATED','ENDED'],['ENDED','LIVE'],['LIVE','CREATED']]as const)('rejects %s -> %s',(a,b)=>expect(()=>transitionLive(a,b)).toThrow(BadRequestException));});

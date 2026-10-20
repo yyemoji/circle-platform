@@ -1,0 +1,1 @@
+export type LiveStatus='CREATED'|'LIVE'|'RECONNECTING'|'ENDED'; export type AppointmentStatus='PENDING'|'CONFIRMED'|'CALLING'|'COMPLETED'|'CANCELLED'; export interface LiveRoomView{id:string;anchorId:string;title:string;status:LiveStatus;viewerCoins:number;secondViewCoins:number;playbackUrl:string|null}

@@ -1,0 +1,2 @@
+export abstract class MediaProvider { abstract provision(streamKey:string,useDemo:boolean):Promise<{publishUrl:string|null;playbackUrl:string}>; }
+export class LocalMediaProvider extends MediaProvider { async provision(streamKey:string,useDemo:boolean){if(useDemo)return{publishUrl:null,playbackUrl:`/media/demo/${streamKey}.mp4`};return{publishUrl:`rtmp://localhost:1935/live/${streamKey}`,playbackUrl:`http://localhost:8888/live/${streamKey}/index.m3u8`};} }

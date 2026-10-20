@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './users/account.module';
 import { ContentModule } from './content/content.module';
 import { CommerceModule } from './catalog/commerce.module';
+import { RealtimeModule } from './live/realtime.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommerceModule } from './catalog/commerce.module';
     AccountModule,
     ContentModule,
     CommerceModule,
+    RealtimeModule,
   ],
   controllers: [HealthController],
 })

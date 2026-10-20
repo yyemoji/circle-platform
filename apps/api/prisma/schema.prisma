@@ -79,6 +79,14 @@ enum OrderStatus {
   REFUNDED
 }
 
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  CALLING
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id              String        @id @default(cuid())
   username        String        @unique
@@ -106,6 +114,9 @@ model User {
   addresses       Address[]
   orders          Order[]
   memberships     Membership[]
+  appointmentsMade Appointment[] @relation("AppointmentUser")
+  appointmentsReceived Appointment[] @relation("AppointmentAnchor")
+  chatSetting     ChatSetting?
 }
 
 model Product {
@@ -326,9 +337,41 @@ model LiveRoom {
   viewerCoins     Int        @default(0)
   secondViewCoins Int        @default(0)
   streamKey       String     @unique
+  publishUrl      String?
+  playbackUrl     String     @default("")
   anchor          User       @relation(fields: [anchorId], references: [id])
+  invites         LiveInvite[]
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+}
+
+model LiveInvite {
+  id        String   @id @default(cuid())
+  roomId    String
+  code      String   @unique
+  type      String
+  room      LiveRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Appointment {
+  id          String            @id @default(cuid())
+  userId      String
+  anchorId    String
+  scheduledAt DateTime
+  note        String?
+  status      AppointmentStatus @default(PENDING)
+  user        User              @relation("AppointmentUser", fields: [userId], references: [id], onDelete: Cascade)
+  anchor      User              @relation("AppointmentAnchor", fields: [anchorId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+model ChatSetting {
+  userId        String  @id
+  allowMessages Boolean @default(true)
+  greeting      String  @default("")
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
