@@ -1,0 +1,1 @@
+import{defineConfig}from'@playwright/test';export default defineConfig({testDir:'tests/e2e',timeout:30000,globalSetup:'./tests/e2e/global-setup.ts',use:{headless:true,viewport:{width:390,height:844},launchOptions:{executablePath:process.platform==='win32'?'C:/Program Files/Google/Chrome/Application/chrome.exe':undefined}}});

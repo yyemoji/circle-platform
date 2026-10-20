@@ -9,9 +9,13 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "test:e2e": "pnpm --filter api test:e2e",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "test:browser": "playwright test",
+    "lint": "pnpm -r typecheck"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "@playwright/test": "^1.56.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12"
   }
 }

@@ -27,7 +27,7 @@
 - [x] Task 10 — Administration console
 - [x] Task 11 — Storage and integration adapters
 - [x] Task 12 — Linux and Windows deployment
-- [ ] Task 13 — End-to-end verification and documentation
+- [x] Task 13 — End-to-end verification and documentation
 
 ## Task log
 
@@ -102,7 +102,7 @@
 - RED: publish, commerce, live-studio, and settings component tests failed because their views did not exist.
 - GREEN: mobile component tests 7/7 pass; API unit tests 29/29 and API E2E tests 19/19 pass; recursive typecheck and production build pass.
 - Review: circle discovery and invitations, content submission guidance, wallet/catalog/orders, conversations and appointments, live startup/fallback, role-gated anchor center, settings, and confirmed logout are available through the mobile router with responsive layouts and accessible controls.
-- Commit: pending
+- Commit: `53f21e3`
 
 ### Task 10
 
@@ -128,3 +128,11 @@
 - Review: Compose defines PostgreSQL, Redis, MediaMTX, API, both web clients, Nginx, persistent volumes, health checks, and dependency ordering. Windows and Linux start, backup, restore, and repeatable seed commands are provided.
 - Host limitation: Docker is not installed on this Windows host, so `docker compose config` and live container smoke testing are deferred; static manifest checks and production builds cover the available host capabilities.
 - Commit: included with `ops: add cross-platform deployment and demo data`
+
+### Task 13
+
+- Status: complete
+- RED: initial Playwright run exposed an incorrect `/admin/` production base path, a numeric formatting expectation mismatch, and an unstable table checkbox selector.
+- GREEN: Playwright role flows 5/5 pass; API unit tests 32/32, API E2E tests 24/24, mobile components 7/7, admin components 2/2, recursive typecheck/lint, production builds, deployment manifest checks, and `git diff --check` pass.
+- Review: user login/payment confirmation, anchor live lifecycle with demo fallback, reviewer batch moderation, administrator dashboard/secret masking/report access, and wallet/catalog/order display run in real Chrome against the actual Vue applications. Feature matrix, test report, known limitations, credentials, and Windows/Linux operating instructions are documented.
+- Commit: included with `test: verify complete platform workflows`
