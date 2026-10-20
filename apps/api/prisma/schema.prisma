@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleCode {
+  USER
+  ANCHOR
+  REVIEWER
+  ADMIN
+}
+
+enum AccountStatus {
+  ACTIVE
+  LOCKED
+  DISABLED
+}
+
+enum ContentStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  OFFLINE
+}
+
+enum LiveStatus {
+  CREATED
+  LIVE
+  RECONNECTING
+  ENDED
+}
+
+enum LedgerDirection {
+  CREDIT
+  DEBIT
+}
+
+model User {
+  id              String        @id @default(cuid())
+  username        String        @unique
+  displayName     String
+  passwordHash    String
+  status          AccountStatus @default(ACTIVE)
+  avatarUrl       String?
+  bio             String?
+  failedLoginCount Int          @default(0)
+  lockedUntil     DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  roles           UserRole[]
+  wallet          Wallet?
+  circles         Circle[]      @relation("CircleOwner")
+  posts           Post[]
+  liveRooms       LiveRoom[]
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]    @relation("AuditActor")
+}
+
+model Role {
+  id          String     @id @default(cuid())
+  code        RoleCode   @unique
+  name        String
+  permissions String[]
+  users       UserRole[]
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model Wallet {
+  id        String        @id @default(cuid())
+  userId    String        @unique
+  balance   Int           @default(0)
+  version   Int           @default(0)
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries   LedgerEntry[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model LedgerEntry {
+  id             String          @id @default(cuid())
+  walletId       String
+  direction      LedgerDirection
+  amount         Int
+  balanceAfter   Int
+  reason         String
+  idempotencyKey String          @unique
+  wallet         Wallet          @relation(fields: [walletId], references: [id], onDelete: Restrict)
+  createdAt      DateTime        @default(now())
+}
+
+model Circle {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  entryCoins  Int      @default(0)
+  ownerId     String
+  owner       User     @relation("CircleOwner", fields: [ownerId], references: [id])
+  posts       Post[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Post {
+  id        String        @id @default(cuid())
+  authorId  String
+  circleId  String?
+  title     String
+  body      String
+  status    ContentStatus @default(DRAFT)
+  author    User          @relation(fields: [authorId], references: [id])
+  circle    Circle?       @relation(fields: [circleId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model LiveRoom {
+  id              String     @id @default(cuid())
+  anchorId        String
+  title           String
+  status          LiveStatus @default(CREATED)
+  viewerCoins     Int        @default(0)
+  secondViewCoins Int        @default(0)
+  streamKey       String     @unique
+  anchor          User       @relation(fields: [anchorId], references: [id])
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  before     Json?
+  after      Json?
+  ipAddress  String?
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
