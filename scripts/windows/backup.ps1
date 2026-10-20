@@ -1,0 +1,1 @@
+param([string]$Output="backup-$(Get-Date -Format yyyyMMdd-HHmmss).sql");$ErrorActionPreference='Stop';$root=Resolve-Path (Join-Path $PSScriptRoot '../..');Set-Location $root;docker compose exec -T postgres pg_dump -U anchor -d anchor_circle | Set-Content -Encoding utf8 $Output;Write-Host "Backup created: $Output"

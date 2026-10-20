@@ -1,0 +1,1 @@
+param([Parameter(Mandatory=$true)][string]$InputFile);$ErrorActionPreference='Stop';$root=Resolve-Path (Join-Path $PSScriptRoot '../..');Set-Location $root;if(-not(Test-Path -LiteralPath $InputFile)){throw 'Backup file not found'};Get-Content -Raw -LiteralPath $InputFile | docker compose exec -T postgres psql -U anchor -d anchor_circle

@@ -1,0 +1,1 @@
+import{spawnSync}from'node:child_process';const result=spawnSync(process.platform==='win32'?'pnpm.cmd':'pnpm',['--filter','api','db:seed'],{stdio:'inherit',env:process.env});process.exit(result.status??1);

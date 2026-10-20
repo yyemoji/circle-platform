@@ -1,0 +1,1 @@
+$ErrorActionPreference='Stop';$root=Resolve-Path (Join-Path $PSScriptRoot '../..');Set-Location $root;if(-not(Test-Path '.env')){Copy-Item '.env.example' '.env'};docker compose up -d --build;docker compose ps;Write-Host '移动端: http://localhost:8080  管理端: http://localhost:8080/admin/'

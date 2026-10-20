@@ -1,0 +1,9 @@
+.git
+.worktrees
+.superpowers
+node_modules
+node_modules.corrupt
+**/dist
+**/data
+.env
+coverage

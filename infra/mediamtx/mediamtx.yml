@@ -1,0 +1,8 @@
+logLevel: info
+rtmp: yes
+hls: yes
+hlsAddress: :8888
+paths:
+  all_others:
+*** Add File: D:\Code\机械九院\anchor-circle-platform\.worktrees\implementation\infra\nginx\spa.conf
+server { listen 80; root /usr/share/nginx/html; location / { try_files $uri $uri/ /index.html; } }

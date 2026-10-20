@@ -26,7 +26,7 @@
 - [x] Task 9 — Remaining mobile product features
 - [x] Task 10 — Administration console
 - [x] Task 11 — Storage and integration adapters
-- [ ] Task 12 — Linux and Windows deployment
+- [x] Task 12 — Linux and Windows deployment
 - [ ] Task 13 — End-to-end verification and documentation
 
 ## Task log
@@ -119,3 +119,12 @@
 - GREEN: API unit tests 32/32 and API E2E tests 24/24 pass; all workspace component tests, recursive typecheck, and production builds pass.
 - Review: magic-byte MIME validation, 10 MiB limit, UUID-only storage paths, sanitized original names, owner authorization, optional Tencent live, sandbox/disabled payment providers, recursive log redaction, and third-party notices are implemented.
 - Commit: included with `feat: secure media storage and integration adapters`
+
+### Task 12
+
+- Status: complete with host runtime limitation
+- RED: the Windows deployment manifest check failed on the absent `compose.yaml`.
+- GREEN: Windows manifest checks pass; all PowerShell deployment scripts parse cleanly; Prisma schema validation and the idempotent seed identity test pass.
+- Review: Compose defines PostgreSQL, Redis, MediaMTX, API, both web clients, Nginx, persistent volumes, health checks, and dependency ordering. Windows and Linux start, backup, restore, and repeatable seed commands are provided.
+- Host limitation: Docker is not installed on this Windows host, so `docker compose config` and live container smoke testing are deferred; static manifest checks and production builds cover the available host capabilities.
+- Commit: included with `ops: add cross-platform deployment and demo data`
