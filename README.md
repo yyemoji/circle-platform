@@ -22,16 +22,27 @@
 
 数据库种子可重复执行，不会重复创建这些账号。用于正式环境时，请立即修改演示密码及 JWT 密钥。
 
-## 3. 推荐部署：Docker Compose
+## 3. 运行方式怎么选
 
-### 3.1 环境要求
+本项目**不依赖 Docker 才能运行**，可按用途选择：
+
+| 方式 | 适用场景 | 需要自行安装 |
+|---|---|---|
+| Docker Compose | 完整部署、演示、交付验收 | Docker Desktop（Windows）或 Docker Engine + Compose（Linux） |
+| 源码直接运行 | 日常开发、断点调试、修改前后端代码 | Node.js、pnpm、PostgreSQL |
+
+两种方式提供的是同一套业务功能。Docker 模式会一并启动 PostgreSQL、Redis、MediaMTX、API、两个 Web 前端和 Nginx；源码调试模式中 PostgreSQL 必须可用，Redis 和 MediaMTX 当前可选。没有 Redis 不影响基础业务调试；没有 MediaMTX 时仍可使用系统内置的演示直播能力，但不能进行真实 RTMP/HLS 推拉流。
+
+## 4. Docker Compose 部署运行
+
+### 4.1 环境要求
 
 - Windows 10/11：Docker Desktop，启用 Compose v2。
 - Linux：Docker Engine 24+ 与 Docker Compose v2。
 - 建议至少 4 GB 可用内存、10 GB 磁盘空间。
 - 首次构建需要访问 Docker Hub 和 npm registry。
 
-### 3.2 配置环境变量
+### 4.2 配置环境变量
 
 进入项目根目录并复制配置：
 
@@ -58,7 +69,7 @@ HTTP_PORT=8080
 
 不要把 `.env` 提交到 Git。
 
-### 3.3 Windows 一键启动
+### 4.3 Windows 一键启动
 
 ```powershell
 .\scripts\windows\start-docker.ps1
@@ -70,7 +81,7 @@ HTTP_PORT=8080
 scripts\windows\start-docker.cmd
 ```
 
-### 3.4 Linux 一键启动
+### 4.4 Linux 一键启动
 
 ```sh
 chmod +x scripts/linux/*.sh scripts/test-deployment.sh
@@ -85,7 +96,7 @@ docker compose up -d --build
 
 API 容器会等待 PostgreSQL 和 Redis 健康，然后自动执行数据库迁移和幂等种子。
 
-### 3.5 访问地址
+### 4.5 访问地址
 
 | 服务 | 地址 |
 |---|---|
@@ -97,7 +108,7 @@ API 容器会等待 PostgreSQL 和 Redis 健康，然后自动执行数据库迁
 
 如果修改了 `HTTP_PORT`，请同步替换上述 Web 端口。
 
-### 3.6 查看运行状态和日志
+### 4.6 查看运行状态和日志
 
 ```powershell
 docker compose ps
@@ -119,14 +130,14 @@ docker compose up -d --build
 
 `docker compose down -v` 会删除数据库、Redis 和上传文件卷，不要在有用数据时执行。
 
-## 4. Windows 源码开发运行
+## 5. Windows 无 Docker 源码调试
 
-### 4.1 环境要求
+### 5.1 环境要求
 
 - Node.js 22+
 - pnpm 10+
 - PostgreSQL 16+
-- 可选：Redis 7、MediaMTX
+- 可选：Redis 7、MediaMTX（基础功能调试不要求）
 
 启用 pnpm：
 
@@ -135,7 +146,7 @@ corepack enable
 corepack prepare pnpm@10.33.0 --activate
 ```
 
-### 4.2 创建本地数据库
+### 5.2 创建本地数据库（首次执行）
 
 使用 PostgreSQL 管理员账号执行：
 
@@ -153,7 +164,9 @@ $env:JWT_ACCESS_SECRET='development-access-secret-change-before-production'
 $env:JWT_REFRESH_SECRET='development-refresh-secret-change-before-production'
 ```
 
-### 4.3 安装、迁移和初始化
+建议同时编辑项目根目录的 `.env` 作为配置记录。注意：PowerShell 中用 `$env:...` 设置的变量只在当前窗口有效；Prisma 命令和以 `pnpm --filter api` 启动的 API 仍应在当前终端显式设置这些变量。
+
+### 5.3 安装、迁移和初始化（首次执行）
 
 ```powershell
 pnpm install
@@ -162,14 +175,18 @@ pnpm --filter api db:migrate
 pnpm --filter api db:seed
 ```
 
-### 4.4 启动三个开发服务
+以上四条命令中，`db:migrate` 创建/升级数据库表，`db:seed` 写入演示账号和初始数据。首次运行不可跳过；以后仅在依赖或数据库结构发生变化时重新执行相应命令。
 
-分别打开三个 PowerShell 窗口，均进入项目根目录并设置 `DATABASE_URL`。
+### 5.4 日常启动三个开发服务
+
+分别打开三个 PowerShell 窗口，均进入项目根目录。若已在根目录创建并正确配置 `.env`，无需在每个窗口重复设置环境变量。
 
 窗口 1——API：
 
 ```powershell
 $env:DATABASE_URL='postgresql://anchor:anchor@localhost:5432/anchor_circle'
+$env:JWT_ACCESS_SECRET='development-access-secret-change-before-production'
+$env:JWT_REFRESH_SECRET='development-refresh-secret-change-before-production'
 pnpm --filter api start:dev
 ```
 
@@ -187,9 +204,11 @@ pnpm --filter admin-web dev
 
 开发地址：API `http://localhost:3000/api`，移动端 `http://localhost:5173/`，管理端 `http://localhost:5174/admin/`。
 
-也可先执行 `.\scripts\windows\start-dev.ps1` 完成依赖和 Prisma 客户端准备，再按照脚本提示开启三个窗口。
+也可先执行 `.\scripts\windows\start-dev.ps1` 完成依赖安装和 Prisma 客户端生成，再按照脚本提示开启三个窗口。该脚本**不会**创建 PostgreSQL 用户/数据库，也不会自动执行迁移和种子；首次运行仍需完成 5.2 和 5.3。
 
-## 5. Linux 非 Docker 源码运行
+停止调试时，在三个终端中分别按 `Ctrl+C`。上传文件默认写入项目根目录下的 `data/uploads`。
+
+## 6. Linux 无 Docker 源码调试
 
 安装 Node.js 22、pnpm 10 和 PostgreSQL 16 后：
 
@@ -212,7 +231,7 @@ pnpm --filter admin-web dev
 
 正式环境建议使用前述 Docker Compose 方式，由 Nginx 统一提供入口。
 
-## 6. 测试和构建
+## 7. 测试和构建
 
 ```powershell
 pnpm test
@@ -232,7 +251,7 @@ sh scripts/test-deployment.sh
 
 Playwright 在 Windows 上使用已安装的 Chrome。Linux 首次运行浏览器测试前可执行 `pnpm exec playwright install chromium`，并按需要调整 `playwright.config.ts` 的浏览器启动配置。
 
-## 7. 备份与恢复
+## 8. 备份与恢复
 
 Windows 备份：
 
@@ -255,7 +274,11 @@ Linux：
 
 上传文件保存在 Docker 卷 `uploads` 中；数据库 SQL 备份不包含上传文件，应另外备份该卷。
 
-## 8. 常见问题
+## 9. 常见问题
+
+### 没有 Docker 能不能运行
+
+可以。按“Windows 无 Docker 源码调试”或“Linux 无 Docker 源码调试”安装本机 PostgreSQL 并启动三个开发服务即可。Docker 不是源码调试的前置条件。
 
 ### API 无法启动或提示连接数据库失败
 
@@ -281,7 +304,7 @@ docker compose logs api
 - 开发端口：API `3000`、移动端 `5173`、管理端 `5174`。
 - MediaMTX：RTMP `1935`、HLS `8888`。
 
-## 9. 上线前检查
+## 10. 上线前检查
 
 - 修改全部演示账号密码。
 - 使用随机且不同的 JWT Access/Refresh 密钥。

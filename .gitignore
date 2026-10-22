@@ -6,6 +6,7 @@ dist/
 coverage/
 test-results/
 playwright-report/
+.runtime/
 data/
 apps/api/data/
 .env
